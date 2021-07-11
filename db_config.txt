@@ -1,0 +1,17 @@
+package main
+
+type dbConfig struct {
+	host     string
+	user     string
+	password string
+	port     string
+	dbname   string
+}
+
+var dbConfig = dbConfig{
+	"localhost",
+	"postgres",
+	"##########",
+	"5432",
+	"lego",
+}
