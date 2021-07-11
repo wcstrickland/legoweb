@@ -3,13 +3,12 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq" // the underscore allows for import without explicit reference
 	"html/template"
-	//    "net/http"
-	//	"log"
-	//	"os"
-	//	"strings"
-	//	"time"
+	"log"
+	"net/http"
+
+	"github.com/julienschmidt/httprouter"
+	_ "github.com/lib/pq" // the underscore allows for import without explicit reference
 )
 
 var db *sql.DB
@@ -20,14 +19,34 @@ func init() {
 }
 
 func main() {
-	configString := fmt.Sprintf("host=%s user=% password=%s port=%s dbname%s sslmode=disable",
-		dbConfig.host, dbConfig.user, dbConfig.password, dbConfig.port, dbConfig.dbname)
-	db, err := sql.Open("postgres")
+	db = connect(myDbConfig)
 	defer db.Close()
+
+	r := httprouter.New()
+
+	r.GET("/", GetHome)
+
+	fmt.Println("Listening on localhost:8080 ")
+	http.ListenAndServe(":8080", r)
+}
+
+func connect(dc dbConfig) *sql.DB {
+	configString := fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=disable",
+		dc.host, dc.user, dc.password, dc.port, dc.dbname)
+	db, err := sql.Open("postgres", configString)
+	if err != nil {
+		log.Fatalln("something went wrong connecting to the database : ", err)
+	}
 	err = db.Ping()
 	if err != nil {
-		fmt.Println("Error pinging db: ", err)
+		log.Fatalln("Error pinging db: ", err)
 	}
+	return db
+}
 
-	fmt.Println("helloworld")
+func GetHome(res http.ResponseWriter, req *http.Request, p httprouter.Params) {
+	err := tpl.ExecuteTemplate(res, "index.gohtml", nil)
+	if err != nil {
+		fmt.Fprintln(res, "something went wrong")
+	}
 }
