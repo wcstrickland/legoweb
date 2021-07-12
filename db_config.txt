@@ -8,7 +8,7 @@ type dbConfig struct {
 	dbname   string
 }
 
-var dbConfig = dbConfig{
+var myDbConfig = dbConfig{
 	"localhost",
 	"postgres",
 	"##########",

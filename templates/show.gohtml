@@ -1,0 +1,31 @@
+// {{.}} == user struct
+{{template "head"}}
+<div class="row mb-2">
+    <div class="col-10 offset-1">
+        <div class="card mb-3">
+            <div class="card-header">
+                    Stock Report
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <b> Item1: </b>
+                        {{.item1.status}}
+                    </li>
+                    <li class="list-group-item">
+                        <b> Item2: </b>
+                        {{.item2.status}}
+                    </li>
+                    <li class="list-group-item">
+                        <b> Item3: </b>
+                        {{.item3.status}}
+                    </li>
+                </ul>
+                <div>
+                    Last checked: {{.item1.check_time}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{template "foot"}}

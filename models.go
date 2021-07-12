@@ -13,3 +13,9 @@ type User struct {
 	item2 string
 	item3 string
 }
+
+type Report struct {
+	item1 Item
+	item2 Item
+	item3 Item
+}
