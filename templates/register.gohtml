@@ -1,0 +1,66 @@
+{{template "head"}}
+<div class="container d-flex justify-content-center align-items-center mt-5">
+  <div class="row mb-5">
+    <div class="col-md-12  col-xl-12 ">
+      <div class="card shadow">
+        <div class="card-body">
+          <h5 class="card-title">Register</h5>
+          <form
+            action="/register"
+            method="POST"
+            class="validated-form"
+            novalidate
+          >
+            <div class="mb-3">
+              <label class="form-label" for="username">Username</label>
+              <input
+                class="form-control"
+                type="text"
+                id="username"
+                name="username"
+                required
+                autofocus
+              />
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="item1">item 1</label>
+              <input
+                class="form-control"
+                type="text"
+                id="item1"
+                name="item1"
+                required
+              />
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="item2">item 2</label>
+              <input
+                class="form-control"
+                type="text"
+                id="item2"
+                name="item2"
+                required
+              />
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="item3">item 3</label>
+              <input
+                class="form-control"
+                type="text"
+                id="item3"
+                name="item3"
+                required
+              />
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <button class="btn btn-success btn-block">Register</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{template "foot"}}

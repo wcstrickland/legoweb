@@ -25,8 +25,11 @@ func main() {
 	r := httprouter.New()
 
 	r.GET("/", GetHome)
+	r.GET("/register", GetRegister)
+	r.GET("/login", GetLogin)
 
-	fmt.Println("Listening on localhost:8080 ")
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	fmt.Println("Listening on http://127.0.0.1:8080 ")
 	http.ListenAndServe(":8080", r)
 }
 
@@ -46,6 +49,20 @@ func connect(dc dbConfig) *sql.DB {
 
 func GetHome(res http.ResponseWriter, req *http.Request, p httprouter.Params) {
 	err := tpl.ExecuteTemplate(res, "index.gohtml", nil)
+	if err != nil {
+		fmt.Fprintln(res, "something went wrong")
+	}
+}
+
+func GetRegister(res http.ResponseWriter, req *http.Request, p httprouter.Params) {
+	err := tpl.ExecuteTemplate(res, "register.gohtml", nil)
+	if err != nil {
+		fmt.Fprintln(res, "something went wrong")
+	}
+}
+
+func GetLogin(res http.ResponseWriter, req *http.Request, p httprouter.Params) {
+	err := tpl.ExecuteTemplate(res, "login.gohtml", nil)
 	if err != nil {
 		fmt.Fprintln(res, "something went wrong")
 	}
