@@ -1,12 +1,11 @@
 {{template "head"}}
 <div class="container d-flex justify-content-center align-items-center mt-5">
-  <div class="row mb-5">
-    <div class="col-md-10 offset-md-1 col-xl-8 offset-xl-4">
+    <div class="col-md-6 offset-md-1 col-xl-6 ">
       <div class="card shadow">
         <div class="card-body">
-          <h5 class="card-title">Login</h5>
+          <h5 class="card-title my-5">Login</h5>
           <form action="/login" method="POST" class="validated-form" novalidate>
-            <div class="mb-3">
+            <div class="my-3">
               <label class="form-label" for="uname">Username</label>
               <input
                 class="form-control"
@@ -18,11 +17,10 @@
               />
               <div class="valid-feedback">Looks good!</div>
             </div>
-            <button class="btn btn-success btn-block">Login</button>
+            <button class="btn btn-success btn-block my-5">Login</button>
           </form>
         </div>
       </div>
     </div>
-  </div>
 </div>
 {{template "foot"}}

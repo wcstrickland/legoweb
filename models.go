@@ -1,9 +1,9 @@
 package main
 
 type Item struct {
-	item       string
-	status     string
-	check_time string
+	Item       string
+	Status     string
+	Check_time string
 }
 
 type User struct {
@@ -15,7 +15,7 @@ type User struct {
 }
 
 type Report struct {
-	item1 Item
-	item2 Item
-	item3 Item
+	Item1 Item
+	Item2 Item
+	Item3 Item
 }

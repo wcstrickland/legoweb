@@ -50,32 +50,32 @@ func cleanSQL(s string) string {
 }
 
 func PostLogin(res http.ResponseWriter, req *http.Request, p httprouter.Params) {
-	//	items := []Item{}
-	//	req.ParseForm()
-	//	uname := req.Form["uname"][0]
-	//	uname = cleanSQL(uname)
-	//	query := fmt.Sprintf("select * from %s", uname)
-	//	rows, err := db.Query(query, nil) // nill might need to be a []interface{}{nil}
-	//	if err != nil {
-	//		fmt.Println("error:", err)
-	//	}
-	//	defer rows.Close()
-	//	for rows.Next() {
-	//		item := Item{}
-	//		err = rows.Scan(&item.item, &item.status, &item.check_time)
-	//		if err != nil {
-	//			fmt.Println("error:", err)
-	//		}
-	//		items = append(items, item)
-	//	}
-	//	report := Report{
-	//		item1: items[0],
-	//		item2: items[1],
-	//		item3: items[2],
-	//	}
-	err := tpl.ExecuteTemplate(res, "show.gohtml", nil)
+	items := []Item{}
+	req.ParseForm()
+	uname := req.Form["uname"][0]
+	uname = cleanSQL(uname)
+	query := fmt.Sprintf("select * from %s", uname)
+	rows, err := db.Query(query)
 	if err != nil {
-		fmt.Fprintln(res, "something went wrong")
+		fmt.Println("error performing query:", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		item := Item{}
+		err = rows.Scan(&item.Item, &item.Status, &item.Check_time)
+		if err != nil {
+			fmt.Println("error getting row:", err)
+		}
+		items = append(items, item)
+	}
+	report := Report{
+		Item1: items[0],
+		Item2: items[1],
+		Item3: items[2],
+	}
+	err = tpl.ExecuteTemplate(res, "show.gohtml", report)
+	if err != nil {
+		fmt.Fprintln(res, err)
 	}
 }
 
