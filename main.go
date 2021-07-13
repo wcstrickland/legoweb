@@ -27,6 +27,7 @@ func main() {
 
 	r.GET("/", GetHome)
 	r.GET("/register", GetRegister)
+	r.POST("/register", PostRegister)
 	r.GET("/login", GetLogin)
 	r.POST("/login", PostLogin)
 
@@ -47,6 +48,36 @@ func cleanSQL(s string) string {
 		}
 	}
 	return strings.Join(newString, "")
+}
+
+//TODO refactor to range over values instead of hardcoding based on the number of items
+
+func PostRegister(res http.ResponseWriter, req *http.Request, p httprouter.Params) {
+	vals := []interface{}{}
+	req.ParseForm()
+	uid := "jassss"
+	vals = append(vals, uid)
+	uname := req.Form["uname"][0]
+	uname = cleanSQL(uname)
+	vals = append(vals, uname)
+	item1 := req.Form["item1"][0]
+	item1 = cleanSQL(item1)
+	vals = append(vals, item1)
+	item2 := req.Form["item2"][0]
+	item2 = cleanSQL(item2)
+	vals = append(vals, item2)
+	item3 := req.Form["item3"][0]
+	item3 = cleanSQL(item3)
+	vals = append(vals, item3)
+	query := "insert into users (uid, uname, item1, item2, item3) VALUES ($1, $2, $3, $4, $5)"
+	_, err := db.Exec(query, vals...)
+	if err != nil {
+		fmt.Println("error performing query:", err)
+	}
+	err = tpl.ExecuteTemplate(res, "success.gohtml", uname)
+	if err != nil {
+		fmt.Fprintln(res, err)
+	}
 }
 
 func PostLogin(res http.ResponseWriter, req *http.Request, p httprouter.Params) {
@@ -75,7 +106,10 @@ func PostLogin(res http.ResponseWriter, req *http.Request, p httprouter.Params) 
 	}
 	err = tpl.ExecuteTemplate(res, "show.gohtml", report)
 	if err != nil {
-		fmt.Fprintln(res, err)
+		err = tpl.ExecuteTemplate(res, "error.gohtml", nil)
+		if err != nil {
+			fmt.Println("error:", err)
+		}
 	}
 }
 
