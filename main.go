@@ -37,7 +37,7 @@ func main() {
 }
 
 func cleanSQL(s string) string {
-	prohib := []string{"(", "{", ";", "&", "@", "^", "%", ",", ":", "}", ")"}
+	prohib := []string{"(", "{", ";", "&", "@", "^", "%", ",", ":", "}", ")", "'", "\""}
 	newString := []string{}
 	for _, v := range s {
 		if strings.Contains(strings.Join(prohib, ""), string(v)) {
@@ -69,8 +69,22 @@ func PostRegister(res http.ResponseWriter, req *http.Request, p httprouter.Param
 	item3 := req.Form["item3"][0]
 	item3 = cleanSQL(item3)
 	vals = append(vals, item3)
-	query := "insert into users (uid, uname, item1, item2, item3) VALUES ($1, $2, $3, $4, $5)"
-	_, err := db.Exec(query, vals...)
+	insertUser := "insert into users (uid, uname, item1, item2, item3) VALUES ($1, $2, $3, $4, $5)"
+	createUserTable := fmt.Sprintf("create table if not exists %s(item varchar(255), status varchar(255), check_time varchar(255))", uname)
+	starterReport := fmt.Sprintf("insert into %s (item, status, check_time) values ($1, $2, $3)", uname)
+	_, err := db.Exec(createUserTable)
+	if err != nil {
+		fmt.Println("error creating user table:", err)
+	}
+	for i, v := range vals {
+		if i > 1 {
+			_, err := db.Exec(starterReport, v, "unchecked", "unchecked")
+			if err != nil {
+				fmt.Println(i, "error creating stock table:", err)
+			}
+		}
+	}
+	_, err = db.Exec(insertUser, vals...)
 	if err != nil {
 		fmt.Println("error performing query:", err)
 	}
