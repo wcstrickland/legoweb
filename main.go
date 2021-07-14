@@ -88,6 +88,11 @@ func PostLogin(res http.ResponseWriter, req *http.Request, p httprouter.Params) 
 	query := fmt.Sprintf("select * from %s", uname)
 	rows, err := db.Query(query)
 	if err != nil {
+		err = tpl.ExecuteTemplate(res, "error.gohtml", nil)
+		if err != nil {
+			fmt.Println("error showing error page. how ironic:", err)
+		}
+		return
 		fmt.Println("error performing query:", err)
 	}
 	defer rows.Close()

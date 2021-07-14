@@ -8,21 +8,24 @@
             <div class="card-body">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
-                        {{.Item1.Item}} 
-                        {{.Item1.Status}}
+                       <b> {{.Item1.Item}} :  
+                        {{.Item1.Status}}  :
+                        </b>
+                       <span class="ml-4"><small>     Last checked: {{.Item1.Check_time}}</small><span>
                     </li>
                     <li class="list-group-item">
-                        {{.Item2.Item}} 
-                        {{.Item2.Status}}
+                       <b> {{.Item2.Item}} :  
+                        {{.Item2.Status}}  :
+                        </b>
+                       <span class="ml-4"><small>     Last checked: {{.Item2.Check_time}}</small><span>
                     </li>
                     <li class="list-group-item">
-                        {{.Item3.Item}} 
-                        {{.Item3.Status}}
+                       <b> {{.Item3.Item}} :  
+                        {{.Item3.Status}}  :
+                        </b>
+                       <span class="ml-4"><small>     Last checked: {{.Item3.Check_time}}</small><span>
                     </li>
                 </ul>
-                <div>
-                    Last checked: {{.Item1.Check_time}}
-                </div>
             </div>
         </div>
     </div>
