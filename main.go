@@ -10,6 +10,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	_ "github.com/lib/pq" // the underscore allows for import without explicit reference
+	"github.com/satori/go.uuid"
 )
 
 var db *sql.DB
@@ -53,26 +54,19 @@ func cleanSQL(s string) string {
 //TODO refactor to range over values instead of hardcoding based on the number of items
 
 func PostRegister(res http.ResponseWriter, req *http.Request, p httprouter.Params) {
-	vals := []interface{}{}
+	var err error
 	req.ParseForm()
-	uid := "jassss"
-	vals = append(vals, uid)
-	uname := req.Form["uname"][0]
-	uname = cleanSQL(uname)
-	vals = append(vals, uname)
-	item1 := req.Form["item1"][0]
-	item1 = cleanSQL(item1)
-	vals = append(vals, item1)
-	item2 := req.Form["item2"][0]
-	item2 = cleanSQL(item2)
-	vals = append(vals, item2)
-	item3 := req.Form["item3"][0]
-	item3 = cleanSQL(item3)
-	vals = append(vals, item3)
+	vals := []interface{}{
+		uuid.Must(uuid.NewV4(), err),
+		cleanSQL(req.Form["uname"][0]),
+		cleanSQL(req.Form["item1"][0]),
+		cleanSQL(req.Form["item2"][0]),
+		cleanSQL(req.Form["item3"][0]),
+	}
 	insertUser := "insert into users (uid, uname, item1, item2, item3) VALUES ($1, $2, $3, $4, $5)"
-	createUserTable := fmt.Sprintf("create table if not exists %s(item varchar(255), status varchar(255), check_time varchar(255))", uname)
-	starterReport := fmt.Sprintf("insert into %s (item, status, check_time) values ($1, $2, $3)", uname)
-	_, err := db.Exec(createUserTable)
+	createUserTable := fmt.Sprintf("create table if not exists %s(item varchar(255), status varchar(255), check_time varchar(255))", cleanSQL(req.Form["uname"][0]))
+	starterReport := fmt.Sprintf("insert into %s (item, status, check_time) values ($1, $2, $3)", cleanSQL(req.Form["uname"][0]))
+	_, err = db.Exec(createUserTable)
 	if err != nil {
 		fmt.Println("error creating user table:", err)
 	}
@@ -88,26 +82,23 @@ func PostRegister(res http.ResponseWriter, req *http.Request, p httprouter.Param
 	if err != nil {
 		fmt.Println("error performing query:", err)
 	}
-	err = tpl.ExecuteTemplate(res, "success.gohtml", uname)
+	err = tpl.ExecuteTemplate(res, "success.gohtml", cleanSQL(req.Form["uname"][0]))
 	if err != nil {
-		fmt.Fprintln(res, err)
+		fmt.Println("error rendering template: ", err)
+		_ = tpl.ExecuteTemplate(res, "error.gohtml", nil)
+		return
 	}
 }
 
 func PostLogin(res http.ResponseWriter, req *http.Request, p httprouter.Params) {
-	items := []Item{}
 	req.ParseForm()
-	uname := req.Form["uname"][0]
-	uname = cleanSQL(uname)
-	query := fmt.Sprintf("select * from %s", uname)
+	items := []Item{}
+	query := fmt.Sprintf("select * from %s", cleanSQL(req.Form["uname"][0]))
 	rows, err := db.Query(query)
 	if err != nil {
-		err = tpl.ExecuteTemplate(res, "error.gohtml", nil)
-		if err != nil {
-			fmt.Println("error showing error page. how ironic:", err)
-		}
-		return
 		fmt.Println("error performing query:", err)
+		_ = tpl.ExecuteTemplate(res, "error.gohtml", nil)
+		return
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -118,17 +109,10 @@ func PostLogin(res http.ResponseWriter, req *http.Request, p httprouter.Params) 
 		}
 		items = append(items, item)
 	}
-	report := Report{
-		Item1: items[0],
-		Item2: items[1],
-		Item3: items[2],
-	}
+	report := Report{items}
 	err = tpl.ExecuteTemplate(res, "show.gohtml", report)
 	if err != nil {
-		err = tpl.ExecuteTemplate(res, "error.gohtml", nil)
-		if err != nil {
-			fmt.Println("error:", err)
-		}
+		_ = tpl.ExecuteTemplate(res, "error.gohtml", nil)
 	}
 }
 

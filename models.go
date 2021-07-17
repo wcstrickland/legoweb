@@ -7,15 +7,11 @@ type Item struct {
 }
 
 type User struct {
-	uid   string
-	uname string
-	item1 string
-	item2 string
-	item3 string
+	Uid   string
+	Uname string
+	Items []string
 }
 
 type Report struct {
-	Item1 Item
-	Item2 Item
-	Item3 Item
+	ReportItems []Item
 }
