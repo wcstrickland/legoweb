@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
@@ -51,7 +52,16 @@ func cleanSQL(s string) string {
 	return strings.Join(newString, "")
 }
 
-//TODO refactor to range over values instead of hardcoding based on the number of items
+func checkUserExists(uname string) error {
+	uname = cleanSQL(uname)
+	record, err := db.Exec("select * from users where uname = $1", uname)
+	fmt.Println("record produced by checkUsername exists", record)
+	if err == nil {
+		return errors.New("User already exists")
+	} else {
+		return nil
+	}
+}
 
 func PostRegister(res http.ResponseWriter, req *http.Request, p httprouter.Params) {
 	var err error
@@ -62,6 +72,13 @@ func PostRegister(res http.ResponseWriter, req *http.Request, p httprouter.Param
 		cleanSQL(req.Form["item1"][0]),
 		cleanSQL(req.Form["item2"][0]),
 		cleanSQL(req.Form["item3"][0]),
+	}
+	err = checkUserExists(cleanSQL(req.Form["uname"][0]))
+	fmt.Println("error inside the post route handler:", err)
+	if err != nil {
+		fmt.Println("error:", err)
+		_ = tpl.ExecuteTemplate(res, "error.gohtml", err)
+		return
 	}
 	insertUser := "insert into users (uid, uname, item1, item2, item3) VALUES ($1, $2, $3, $4, $5)"
 	createUserTable := fmt.Sprintf("create table if not exists %s(item varchar(255), status varchar(255), check_time varchar(255))", cleanSQL(req.Form["uname"][0]))
@@ -85,7 +102,7 @@ func PostRegister(res http.ResponseWriter, req *http.Request, p httprouter.Param
 	err = tpl.ExecuteTemplate(res, "success.gohtml", cleanSQL(req.Form["uname"][0]))
 	if err != nil {
 		fmt.Println("error rendering template: ", err)
-		_ = tpl.ExecuteTemplate(res, "error.gohtml", nil)
+		_ = tpl.ExecuteTemplate(res, "error.gohtml", err)
 		return
 	}
 }
@@ -97,7 +114,7 @@ func PostLogin(res http.ResponseWriter, req *http.Request, p httprouter.Params) 
 	rows, err := db.Query(query)
 	if err != nil {
 		fmt.Println("error performing query:", err)
-		_ = tpl.ExecuteTemplate(res, "error.gohtml", nil)
+		_ = tpl.ExecuteTemplate(res, "error.gohtml", err)
 		return
 	}
 	defer rows.Close()
@@ -112,7 +129,7 @@ func PostLogin(res http.ResponseWriter, req *http.Request, p httprouter.Params) 
 	report := Report{items}
 	err = tpl.ExecuteTemplate(res, "show.gohtml", report)
 	if err != nil {
-		_ = tpl.ExecuteTemplate(res, "error.gohtml", nil)
+		_ = tpl.ExecuteTemplate(res, "error.gohtml", err)
 	}
 }
 
