@@ -54,13 +54,25 @@ func cleanSQL(s string) string {
 
 func checkUserExists(uname string) error {
 	uname = cleanSQL(uname)
-	record, err := db.Exec("select * from users where uname = $1", uname)
-	fmt.Println("record produced by checkUsername exists", record)
-	if err == nil {
-		return errors.New("User already exists")
-	} else {
-		return nil
+	u := User{
+		Uid:   "",
+		Uname: uname,
+		Items: []string{
+			"",
+			"",
+			"",
+		},
 	}
+	err := db.QueryRow("select * from users where uname = $1", uname).Scan(&u.Uid, &u.Uname, &u.Items[0], &u.Items[1], &u.Items[2])
+	switch {
+	case err != sql.ErrNoRows:
+		return errors.New("User already exists")
+	case err != nil:
+		fmt.Printf("query error: %v\n", err)
+	default:
+		fmt.Printf("username is %q", uname)
+	}
+	return nil
 }
 
 func PostRegister(res http.ResponseWriter, req *http.Request, p httprouter.Params) {
