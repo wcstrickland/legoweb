@@ -179,3 +179,19 @@ func GetLogin(res http.ResponseWriter, req *http.Request, p httprouter.Params) {
 		fmt.Fprintln(res, "something went wrong")
 	}
 }
+
+type Item struct {
+	Item       string
+	Status     string
+	Check_time string
+}
+
+type User struct {
+	Uid   string
+	Uname string
+	Items []string
+}
+
+type Report struct {
+	ReportItems []Item
+}

@@ -1,4 +1,4 @@
-module legoweb
+module wcstrickland/legoweb
 
 go 1.16
 
