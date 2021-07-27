@@ -36,7 +36,7 @@ func main() {
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	fmt.Println("Listening on http://127.0.0.1:8080 ")
-	http.ListenAndServe(os.Getenv("PORT"), r)
+	http.ListenAndServe(":80"), r)
 }
 
 func cleanSQL(s string) string {
