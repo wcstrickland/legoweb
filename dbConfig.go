@@ -1,9 +1,5 @@
 package main
 
-import (
-	"os"
-)
-
 type dbConfig struct {
 	host     string
 	user     string
@@ -13,9 +9,9 @@ type dbConfig struct {
 }
 
 var myDbConfig = dbConfig{
-	os.Getenv("DBHOST"),
+	"lego.ceurumcah93i.us-east-1.rds.amazonaws.com",
 	"postgres",
-	os.Getenv("DBPASS"),
+	"ThirtyFour12",
 	"5432",
 	"lego",
 }

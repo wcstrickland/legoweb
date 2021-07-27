@@ -7,7 +7,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/julienschmidt/httprouter"
@@ -36,7 +35,7 @@ func main() {
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	fmt.Println("Listening on http://127.0.0.1:8080 ")
-	http.ListenAndServe(":80"), r)
+	http.ListenAndServe(":8080", r)
 }
 
 func cleanSQL(s string) string {
