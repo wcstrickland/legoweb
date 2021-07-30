@@ -8,6 +8,9 @@ type dbConfig struct {
 	dbname   string
 }
 
+// place database connection info in this struct
+// advisable to use environment variables
+
 var myDbConfig = dbConfig{
 	"localhost",
 	"postgres",
